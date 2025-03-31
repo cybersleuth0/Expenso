@@ -1,9 +1,13 @@
 import 'dart:io';
+import 'package:expenso/App_Constant/constant.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../Model/user_model.dart';
+
+
 
 class Db_Helper {
   Db_Helper._(); //Single Ton Class
@@ -67,7 +71,7 @@ class Db_Helper {
           "$EXPENSE_DESCRIPTION TEXT,"
           "$EXPENSE_AMOUNT REAL,"
           "$EXPENSE_BALANCE REAL,"
-          "$EXPENSE_TYPE TEXT,"//1-for credit 2-debit
+          "$EXPENSE_TYPE TEXT," //1-for credit 2-debit
           "$EXPENSE_DATE TEXT,"
           "$EXPENSE_CATEGORY TEXT"
           ")");
@@ -98,6 +102,10 @@ class Db_Helper {
     var mdata = await db.query(USER_TABLE,
         where: "$USER_EMAIL=? AND $USER_PASSWORD=?",
         whereArgs: [email, password]);
+    if (mdata.isNotEmpty) {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setInt(AppConstant.ISLOGIN, UserModel.fromMap(mdata[0]).user_id ?? 0);
+    }
     return mdata.isNotEmpty;
   }
 }

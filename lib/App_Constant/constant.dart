@@ -7,6 +7,10 @@ import '../Screens/auth/signupScreen.dart';
 import '../Screens/intro_Screen.dart';
 import '../Screens/splash_Screen.dart';
 
+class AppConstant {
+  static const String ISLOGIN = "is_login";
+}
+
 class AppRoutes {
   static const String ROUTE_SPLASH = "/";
   static const String ROUTE_INTRO = "/intro";

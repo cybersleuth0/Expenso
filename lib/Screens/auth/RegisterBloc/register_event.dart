@@ -1,4 +1,4 @@
-import 'package:expenso/Model/user_model.dart';
+import '../../../data/Model/user_model.dart';
 
 abstract class RegisterEvent {}
 

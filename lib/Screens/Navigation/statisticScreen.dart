@@ -1,4 +1,6 @@
+import 'package:expenso/App_Constant/constant.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class StatisticPage extends StatelessWidget {
   @override
@@ -19,7 +21,7 @@ class StatisticPage extends StatelessWidget {
         padding: EdgeInsets.all(10.0),
         child: SingleChildScrollView(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               //first row name and circile avatar
               SizedBox(height: 15),
@@ -103,6 +105,20 @@ class StatisticPage extends StatelessWidget {
                       fontWeight: FontWeight.w600,
                       fontFamily: "Poppins")),
               SizedBox(height: 15),
+              ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white54,
+                      padding: EdgeInsets.symmetric(horizontal: 50)),
+                  onPressed: () async {
+                    var prefs = await SharedPreferences.getInstance();
+                    prefs.remove(AppConstant.ISLOGIN);
+                    Navigator.pushReplacementNamed(
+                        context, AppRoutes.ROUTE_LOGIN);
+                  },
+                  child: Text(
+                    "LogOut",
+                    style: TextStyle(fontSize: 28),
+                  ))
             ],
           ),
         ),
