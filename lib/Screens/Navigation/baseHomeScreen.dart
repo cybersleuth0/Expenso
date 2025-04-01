@@ -27,7 +27,7 @@ class _BasePageState extends State<BasePage> {
                   icon: Icon(Icons.home_outlined), label: "Home"),
               NavigationDestination(
                   icon: Icon(Icons.bar_chart), label: "Statistic"),
-              NavigationDestination(icon: Icon(Icons.add), label: "Profile"),
+              NavigationDestination(icon: Icon(Icons.add), label: "Notification"),
               NavigationDestination(
                   icon: Icon(Icons.notifications_none_rounded),
                   label: "Profile"),

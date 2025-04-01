@@ -11,7 +11,6 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
   RegisterBloc({required this.userRepository}) : super(RegisterInitialState()) {
     on<RegisterUserEvent>((event, emit) async {
       emit(RegisterLoadingState());
-      userRepository.registerUser(newusr: event.RegisterNewUsr);
       // if (await dbHelper.isUserAlreadyExist(
       //     email: event.RegisterNewUsr.user_email)) {
       //   emit(RegisterFailureState(errorMsg: "User Already Exist"));
@@ -24,8 +23,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
       //   }
       // }
       if (await userRepository.checkIfEmailAlreadyExists(
-          email: event.RegisterNewUsr.user_email)) {
-        emit(RegisterFailureState(errorMsg: "User Already Exist"));
+          email: event.RegisterNewUsr.user_email)) {emit(RegisterFailureState(errorMsg: "User Already Exist"));
       } else {
         bool check =
             await userRepository.registerUser(newusr: event.RegisterNewUsr);
