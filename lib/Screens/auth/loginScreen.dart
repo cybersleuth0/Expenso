@@ -2,7 +2,6 @@ import 'package:expenso/App_Constant/constant.dart';
 import 'package:expenso/Screens/auth/LoginBloc/LoginBloc.dart';
 import 'package:expenso/Screens/auth/LoginBloc/LoginEvent.dart';
 import 'package:expenso/Screens/auth/LoginBloc/LoginState.dart';
-import 'package:expenso/Screens/auth/signupScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -30,8 +29,10 @@ class _LoginPageState extends State<LoginPage> {
     return Form(
       key: formkey,
       child: Scaffold(
+        extendBodyBehindAppBar: true,
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
+          automaticallyImplyLeading: false,
           centerTitle: true,
           title: Text(
             "ExPenso",
@@ -60,11 +61,11 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                padding: const EdgeInsets.only(left: 24, right: 24, top: 50),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(height: 270),
+                    const SizedBox(height: 320),
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
@@ -216,10 +217,7 @@ class _LoginPageState extends State<LoginPage> {
                       alignment: Alignment.center,
                       child: TextButton(
                         onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => Signuppage()));
+                          Navigator.pushNamed(context, AppRoutes.ROUTE_SIGNUP);
                         },
                         child: const Text.rich(
                           TextSpan(

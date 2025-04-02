@@ -2,7 +2,6 @@ import 'package:expenso/App_Constant/constant.dart';
 import 'package:expenso/Screens/auth/RegisterBloc/register_bloc.dart';
 import 'package:expenso/Screens/auth/RegisterBloc/register_event.dart';
 import 'package:expenso/Screens/auth/RegisterBloc/register_state.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -33,7 +32,7 @@ class _SignUpPageState extends State<Signuppage> {
         resizeToAvoidBottomInset: false,
         //use for avoid keyboard overlap from bottom
         appBar: AppBar(
-          leadingWidth: 0,
+          automaticallyImplyLeading: false,
           centerTitle: true,
           title: const Text(
             "ExPenso",
@@ -235,11 +234,11 @@ class _SignUpPageState extends State<Signuppage> {
                                               content: Text(state.errorMsg)));
                                     } else if (state is RegisterSuccessState) {
                                       isLoading = false;
-                                      Navigator.pop(context);
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(SnackBar(
                                               content: Text(
                                                   "Registered Successfully!!")));
+                                      Navigator.pop(context);
                                     }
                                   },
                                   child: ElevatedButton(
