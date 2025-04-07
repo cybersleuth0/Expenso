@@ -15,7 +15,10 @@ class HomePage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text("Expenso",
-                style: TextStyle(fontSize: 28, fontFamily: "Poppins")),
+                style: TextStyle(
+                    fontSize: 28,
+                    fontFamily: "Poppins",
+                    fontWeight: FontWeight.w600)),
             Icon(Icons.search, size: 38),
           ],
         ),
@@ -25,9 +28,13 @@ class HomePage extends StatelessWidget {
         child: BlocBuilder<ExpBloc, ExpState>(
           buildWhen: (prev, curr) => prev != curr,
           builder: (context, state) {
-            if (state is ExpLoadingState) return CircularProgressIndicator();
+            if (state is ExpLoadingState) {
+              return Center(child: CircularProgressIndicator());
+            }
 
             if (state is ExpSuccessState) {
+
+              
               return SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -48,7 +55,7 @@ class HomePage extends StatelessWidget {
                                 style: TextStyle(
                                     fontSize: 17,
                                     fontFamily: "Poppins",
-                                    color: Colors.grey[400]),
+                                    color: Colors.grey[600]),
                               ),
                               TextSpan(
                                 text: 'Błaszczykowski',
@@ -67,10 +74,10 @@ class HomePage extends StatelessWidget {
                     ),
                     SizedBox(height: 15),
                     Container(
-                      width: double.infinity,
-                      padding: EdgeInsets.all(10.0),
+                      height: 150,
+                      padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: Color(0xff7b88ff),
+                        color: Color(0xff5967cd),
                         borderRadius: BorderRadius.circular(15),
                       ),
                       child: Row(
@@ -85,30 +92,29 @@ class HomePage extends StatelessWidget {
                                 Text("Expense Total",
                                     style: TextStyle(
                                         color: Colors.white,
-                                        fontSize: 25,
+                                        fontSize: 20,
                                         fontFamily: "Poppins")),
                                 SizedBox(height: 2),
                                 Text("\$3,722",
                                     style: TextStyle(
                                         color: Colors.white,
-                                        fontSize: 28,
+                                        fontSize: 25,
                                         fontFamily: "Poppins",
-                                        fontWeight: FontWeight.bold)),
+                                        fontWeight: FontWeight.w700)),
                                 SizedBox(height: 5),
                                 Row(
                                   children: [
                                     Container(
                                       height: 30,
-                                      width: 40,
                                       alignment: Alignment.center,
                                       decoration: BoxDecoration(
-                                          color: Color(0xffdd6565),
+                                          color: Colors.red,
                                           borderRadius:
                                               BorderRadius.circular(5)),
-                                      child: Text('+\$240',
+                                      child: Text(' +\$240 ',
                                           style: TextStyle(
                                               color: Colors.white,
-                                              fontSize: 10,
+                                              fontSize: 15,
                                               fontFamily: "Poppins",
                                               fontWeight: FontWeight.w500)),
                                     ),
@@ -117,7 +123,7 @@ class HomePage extends StatelessWidget {
                                         style: TextStyle(
                                             color: Colors.white54,
                                             fontWeight: FontWeight.w500,
-                                            fontSize: 10,
+                                            fontSize: 12,
                                             fontFamily: "Poppins")),
                                   ],
                                 ),
@@ -128,7 +134,7 @@ class HomePage extends StatelessWidget {
                           Expanded(
                             child: Transform.scale(
                               alignment: Alignment.center,
-                              scale: 1.9,
+                              scale: 1.7,
                               child: Image(
                                   image: AssetImage(
                                       "assets/images/home_image.png")),
@@ -140,7 +146,7 @@ class HomePage extends StatelessWidget {
                     SizedBox(height: 15),
                     Text("Expense List",
                         style: TextStyle(
-                            fontSize: 18,
+                            fontSize: 20,
                             fontWeight: FontWeight.w600,
                             fontFamily: "Poppins")),
                     SizedBox(height: 15),
@@ -159,7 +165,7 @@ class HomePage extends StatelessWidget {
               return Text(state.errorMsg);
             }
 
-            return Text("Loading...");
+            return Container();
           },
         ),
       ),

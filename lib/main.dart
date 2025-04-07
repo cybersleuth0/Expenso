@@ -2,6 +2,7 @@ import 'package:expenso/App_Constant/constant.dart';
 import 'package:expenso/Screens/auth/LoginBloc/LoginBloc.dart';
 import 'package:expenso/Screens/auth/RegisterBloc/register_bloc.dart';
 import 'package:expenso/Screens/expense/Bloc/expBloc.dart';
+import 'package:expenso/data/repository/expenseRepository.dart';
 import 'package:expenso/data/repository/user_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -20,7 +21,7 @@ void main() {
                 userRepository:
                     UserRepository(db_helper: Db_Helper.getInstance()))),
         BlocProvider(
-            create: (context) => ExpBloc(db_helper: Db_Helper.getInstance()))
+            create: (context) => ExpBloc(expenseRepository: ExpenseRepository(db_helper: Db_Helper.getInstance())))
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
