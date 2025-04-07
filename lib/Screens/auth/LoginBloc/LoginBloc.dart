@@ -3,7 +3,6 @@ import 'package:expenso/Screens/auth/LoginBloc/LoginState.dart';
 import 'package:expenso/data/repository/user_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../data/Local/db_helper.dart';
 
 class LoginBloc extends Bloc<LoginEvents, LoginStates> {
   UserRepository userRepository;

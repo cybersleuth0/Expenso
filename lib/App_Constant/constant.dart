@@ -13,37 +13,33 @@ class AppConstant {
   static const String ISLOGIN = "is_login";
   static List<expCategoryModel> mcat = [
     expCategoryModel(
-        id: 1,
+        id: 0,
         name: "Shopping",
         imgPath: "assets/images/ExpenseCat/shopping.jpg"),
     expCategoryModel(
-        id: 2,
+        id: 1,
         name: "Bills",
         imgPath: "assets/images/ExpenseCat/Bills_Invoice.jpg"),
     expCategoryModel(
-        id: 3,
+        id: 2,
         name: "Movies/Pvr",
         imgPath: "assets/images/ExpenseCat/Entertainment.jpg"),
     expCategoryModel(
-        id: 4,
+        id: 3,
         name: "OutSide-Food",
         imgPath: "assets/images/ExpenseCat/Food_Dining.jpg"),
     expCategoryModel(
+        id: 4, name: "Swiggy", imgPath: "assets/images/ExpenseCat/swiggy.jpg"),
+    expCategoryModel(
         id: 5,
-        name: "Shopping",
-        imgPath: "assets/images/ExpenseCat/shopping.jpg"),
-    expCategoryModel(
-        id: 6, name: "Swiggy", imgPath: "assets/images/ExpenseCat/swiggy.jpg"),
-    expCategoryModel(
-        id: 7,
         name: "Delivery_Fuel",
         imgPath: "assets/images/ExpenseCat/swiggy_petrol.jpg"),
     expCategoryModel(
-        id: 8,
+        id: 6,
         name: "Maintenance",
         imgPath: "assets/images/ExpenseCat/Transportation.png"),
     expCategoryModel(
-        id: 8,
+        id: 7,
         name: "Bike Fuel",
         imgPath: "assets/images/ExpenseCat/Petrol.jpg"),
   ];

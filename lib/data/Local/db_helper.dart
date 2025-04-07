@@ -1,13 +1,13 @@
 import 'dart:io';
+
 import 'package:expenso/App_Constant/constant.dart';
+import 'package:expenso/data/Model/expense_model.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../Model/user_model.dart';
-
-
 
 class Db_Helper {
   Db_Helper._(); //Single Ton Class
@@ -33,7 +33,8 @@ class Db_Helper {
   static String EXPENSE_BALANCE = "expense_balance";
   static String EXPENSE_TYPE = "expense_type"; //1=> Credit 2=> Debit
   static String EXPENSE_CATEGORY = "expense_category_id";
-  static String EXPENSE_DATE = "expense_date";
+
+  //static String EXPENSE_DATE = "expense_date";
   static String EXPENSE_CREATED_AT = "expense_createdAt";
 
   Database? _db;
@@ -71,8 +72,8 @@ class Db_Helper {
           "$EXPENSE_DESCRIPTION TEXT,"
           "$EXPENSE_AMOUNT REAL,"
           "$EXPENSE_BALANCE REAL,"
+          "$EXPENSE_CREATED_AT TEXT,"
           "$EXPENSE_TYPE TEXT," //1-for credit 2-debit
-          "$EXPENSE_DATE TEXT,"
           "$EXPENSE_CATEGORY TEXT"
           ")");
     });
@@ -104,8 +105,32 @@ class Db_Helper {
         whereArgs: [email, password]);
     if (mdata.isNotEmpty) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      prefs.setInt(AppConstant.ISLOGIN, UserModel.fromMap(mdata[0]).user_id ?? 0);
+      prefs.setInt(
+          AppConstant.ISLOGIN, UserModel.fromMap(mdata[0]).user_id ?? 0);
     }
     return mdata.isNotEmpty;
+  }
+
+  //Expense
+
+  //This function will used for adding new Expense
+  Future<bool> addNewExpense({required ExpenseModel newExp}) async {
+    var db = await getDb();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int userID = prefs.getInt(AppConstant.ISLOGIN) ?? 0;
+    newExp.user_id = userID;
+    int roweffected = await db.insert(EXPENSE_TABLE, newExp.toMap());
+    return roweffected > 0;
+  }
+
+  //this function will used for getting all the expenses
+  Future<List<ExpenseModel>> fetchallExpenses() async {
+    var db = await getDb();
+    List<Map<String, dynamic>> expFromDB = await db.query(EXPENSE_TABLE);
+    List<ExpenseModel> allExpense = [];
+    for (Map<String, dynamic> eachItem in expFromDB) {
+      allExpense.add(ExpenseModel.fromMap(eachItem));
+    }
+    return allExpense;
   }
 }

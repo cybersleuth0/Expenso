@@ -1,6 +1,9 @@
 import 'package:expenso/Screens/expense/addExpense_Screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../expense/Bloc/expBloc.dart';
+import '../expense/Bloc/expEvents.dart';
 import 'homePage_Screen.dart';
 import 'statisticScreen.dart';
 
@@ -11,7 +14,16 @@ class BasePage extends StatefulWidget {
 
 class _BasePageState extends State<BasePage> {
   int _selectedIndex = 0;
-  List<Widget> _pages = [HomePage(), StatisticPage(), AddNewExpense()];
+  late final List<Widget> _pages;
+
+  @override
+  void initState() {
+    super.initState();
+    _pages = [HomePage(), StatisticPage()];
+
+    // Fetch all expenses on app start
+    context.read<ExpBloc>().add(FetchExpEvent());
+  }
 
   void _onTabTapped(int index) {
     setState(() {
@@ -23,45 +35,35 @@ class _BasePageState extends State<BasePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: _pages[_selectedIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        selectedItemColor: Colors.pinkAccent,
+        unselectedItemColor: Colors.grey,
+        onTap: _onTabTapped,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.bar_chart),
+            label: 'Stats',
+          ),
+        ],
+      ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
+        onPressed: () async {
+          await Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => AddNewExpense()),
           );
+          // After returning from Add Expense
+          context.read<ExpBloc>().add(FetchExpEvent());
         },
-        backgroundColor: Colors.pinkAccent, // Change color as needed
+        backgroundColor: Colors.pinkAccent,
         child: Icon(Icons.add, size: 28, color: Colors.white),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: BottomAppBar(
-        shape: CircularNotchedRectangle(), // 🔥 Gives the curved effect
-        notchMargin: 8.0, // Space between FAB and BottomAppBar
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            IconButton(
-              icon: Icon(Icons.home,
-                  color: _selectedIndex == 0 ? Colors.pinkAccent : Colors.grey),
-              onPressed: () => _onTabTapped(0),
-            ),
-            IconButton(
-              icon: Icon(Icons.bar_chart,
-                  color: _selectedIndex == 1 ? Colors.pinkAccent : Colors.grey),
-              onPressed: () => _onTabTapped(1),
-            ),
-            SizedBox(width: 40), // Space for FAB
-            IconButton(
-              icon: Icon(Icons.notifications, color: Colors.grey),
-              onPressed: () {}, // Implement this if needed
-            ),
-            IconButton(
-              icon: Icon(Icons.person, color: Colors.grey),
-              onPressed: () {}, // Implement this if needed
-            ),
-          ],
-        ),
-      ),
     );
   }
 }
