@@ -1,10 +1,31 @@
 import 'package:expenso/Screens/expense/Bloc/expBloc.dart';
 import 'package:expenso/Screens/expense/Bloc/expState.dart';
+import 'package:expenso/data/Model/FilterModel.dart';
+import 'package:expenso/data/Model/expense_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 
-class HomePage extends StatelessWidget {
-  const HomePage({Key? key}) : super(key: key);
+import '../expense/Bloc/expEvents.dart';
+
+class HomePage extends StatefulWidget {
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  //This will store all filtered data
+  List<FilterExpenseModel> allExpense = [];
+
+  //Lets create a dateFormat
+  DateFormat df = DateFormat.yMMMd();
+
+  @override
+  void initState() {
+    super.initState();
+    // Fetch all expenses on app start
+    context.read<ExpBloc>().add(FetchExpEvent());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,8 +54,9 @@ class HomePage extends StatelessWidget {
             }
 
             if (state is ExpSuccessState) {
+              //Filter Data here
+              filterExpenseByType(allexpense: state.allExpenseFromDb);
 
-              
               return SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -170,6 +192,20 @@ class HomePage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void filterExpenseByType({required List<ExpenseModel> allexpense}) {
+    List<String> uniqDates = [];
+    for (ExpenseModel eachExp in allexpense) {
+      //For filtering the date we need to get date First
+      String alldates = df.format(DateTime.fromMillisecondsSinceEpoch(
+          int.parse(eachExp.expense_createdAt)));
+      // print(alldates);
+      if (!uniqDates.contains(alldates)) {
+        uniqDates.add(alldates);
+      }
+    }
+    print("Uniq Date ${uniqDates}");
   }
 
   Widget expenseList() {

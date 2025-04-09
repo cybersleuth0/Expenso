@@ -20,9 +20,6 @@ class _BasePageState extends State<BasePage> {
   void initState() {
     super.initState();
     _pages = [HomePage(), StatisticPage()];
-
-    // Fetch all expenses on app start
-    context.read<ExpBloc>().add(FetchExpEvent());
   }
 
   void _onTabTapped(int index) {
@@ -57,8 +54,6 @@ class _BasePageState extends State<BasePage> {
             context,
             MaterialPageRoute(builder: (context) => AddNewExpense()),
           );
-          // After returning from Add Expense
-          context.read<ExpBloc>().add(FetchExpEvent());
         },
         backgroundColor: Colors.pinkAccent,
         child: Icon(Icons.add, size: 28, color: Colors.white),
