@@ -29,8 +29,6 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-
-    print("init called: ${AppConstant.initcalled}");
     // Fetch all expenses on app start
     context.read<ExpBloc>().add(FetchExpEvent());
     AppConstant.initcalled++;
@@ -49,12 +47,12 @@ class _HomePageState extends State<HomePage> {
                     fontSize: 28,
                     fontFamily: "Poppins",
                     fontWeight: FontWeight.w600)),
-            Icon(Icons.search, size: 38),
+            Icon(Icons.search, size: 30),
           ],
         ),
       ),
       body: Padding(
-        padding: EdgeInsets.all(10.0),
+        padding: EdgeInsets.all(13.0),
         child: BlocBuilder<ExpBloc, ExpState>(
           // buildWhen: (prev, curr) => prev != curr,
           builder: (context, state) {
@@ -95,7 +93,7 @@ class _HomePageState extends State<HomePage> {
                                     style: TextStyle(
                                         fontSize: 22,
                                         fontFamily: "Poppins",
-                                        fontWeight: FontWeight.bold,
+                                        fontWeight: FontWeight.w500,
                                         color: Colors.black87),
                                   ),
                                 ],
@@ -108,15 +106,13 @@ class _HomePageState extends State<HomePage> {
                               onSelected: (String? newValue) {
                                 filterDropdownValue = newValue!;
                                 if (filterDropdownValue == "Date") {
-                                  filterFlag = 0;
+                                  filterFlag = 0; //0 for date
                                 } else if (filterDropdownValue == "Month") {
-                                  filterFlag = 1;
+                                  filterFlag = 1; //0 for month
                                 } else {
-                                  filterFlag = 2;
+                                  filterFlag = 2; //0 for year
                                 }
-                                setState(() {
-                                  print("Filter Flag: ${filterFlag}");
-                                });
+                                setState(() {});
                               },
                               dropdownMenuEntries:
                                   filterDropdownValueList.map((newvalue) {
@@ -131,73 +127,76 @@ class _HomePageState extends State<HomePage> {
                     ),
                     SizedBox(height: 15),
                     Container(
-                      height: 150,
-                      padding: const EdgeInsets.all(10),
+                      height: 140,
+                      padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
                         color: Color(0xff5967cd),
                         borderRadius: BorderRadius.circular(15),
                       ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          SizedBox(width: 10),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text("Expense Total",
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 20,
-                                        fontFamily: "Poppins")),
-                                SizedBox(height: 2),
-                                Text("\$3,722",
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 25,
-                                        fontFamily: "Poppins",
-                                        fontWeight: FontWeight.w700)),
-                                SizedBox(height: 5),
-                                Row(
-                                  children: [
-                                    Container(
-                                      height: 30,
-                                      alignment: Alignment.center,
-                                      decoration: BoxDecoration(
-                                          color: Colors.red,
-                                          borderRadius:
-                                              BorderRadius.circular(5)),
-                                      child: Text(' +\$240 ',
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            SizedBox(width: 10),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text("Expense Total",
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 20,
+                                          fontFamily: "Poppins")),
+                                  SizedBox(height: 2),
+                                  Text("\$3,722",
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 25,
+                                          fontFamily: "Poppins",
+                                          fontWeight: FontWeight.w700)),
+                                  SizedBox(height: 5),
+                                  Row(
+                                    children: [
+                                      Container(
+                                        height: 30,
+                                        alignment: Alignment.center,
+                                        decoration: BoxDecoration(
+                                            color: Colors.red,
+                                            borderRadius:
+                                                BorderRadius.circular(5)),
+                                        child: Text(' +\$240 ',
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 15,
+                                                fontFamily: "Poppins",
+                                                fontWeight: FontWeight.w500)),
+                                      ),
+                                      SizedBox(width: 5),
+                                      Text('than last month',
                                           style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 15,
-                                              fontFamily: "Poppins",
-                                              fontWeight: FontWeight.w500)),
-                                    ),
-                                    SizedBox(width: 5),
-                                    Text('than last month',
-                                        style: TextStyle(
-                                            color: Colors.white54,
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: 12,
-                                            fontFamily: "Poppins")),
-                                  ],
-                                ),
-                              ],
+                                              color: Colors.white54,
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: 12,
+                                              fontFamily: "Poppins")),
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                          SizedBox(width: 10),
-                          Expanded(
-                            child: Transform.scale(
-                              alignment: Alignment.center,
-                              scale: 1.7,
-                              child: Image(
-                                  image: AssetImage(
-                                      "assets/images/home_image.png")),
+                            SizedBox(width: 10),
+                            Expanded(
+                              child: Transform.scale(
+                                alignment: Alignment.center,
+                                scale: 1.7,
+                                child: Image(
+                                    image: AssetImage(
+                                        "assets/images/home_image.png")),
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                     SizedBox(height: 15),
@@ -208,8 +207,7 @@ class _HomePageState extends State<HomePage> {
                             fontFamily: "Poppins")),
                     SizedBox(height: 15),
                     Container(
-                      height: MediaQuery.of(context).size.height *
-                          0.5, // Adjust as needed
+                      height: MediaQuery.of(context).size.height * 0.5,
                       child: filteredExpenses.isEmpty
                           ? Center(
                               child: Text(
@@ -234,103 +232,6 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
-  }
-
-  void filterExpense(
-      {required filterType, required List<ExpenseModel> allexpense}) {
-    filteredExpenses.clear();
-    /*
-    ++++++++++++++++++++++++++++++
-    For Date
-    ++++++++++++++++++++++++++++++
-     */
-    if (filterType == 0) {
-      List<String> uniqDates = [];
-
-      // Find unique dates
-      for (ExpenseModel eachExp in allexpense) {
-        String alldates = df.format(DateTime.fromMillisecondsSinceEpoch(
-            int.parse(eachExp.expense_createdAt)));
-        if (!uniqDates.contains(alldates)) {
-          uniqDates.add(alldates);
-        }
-      }
-
-      // Process expenses for each date
-      for (String eachdate in uniqDates) {
-        num eachDateTotalAmt = 0.0; //this is the total amount of each date
-        List<ExpenseModel> eachDateExpense =
-            []; //this will store all expenses of each date
-
-        for (ExpenseModel eachExp in allexpense) {
-          //this  will give us single date from uniq dates
-          String singledate = df.format(DateTime.fromMillisecondsSinceEpoch(
-              int.parse(eachExp.expense_createdAt)));
-          if (eachdate == singledate) {
-            eachDateExpense.add(eachExp);
-            if (eachExp.expense_type == "Debit") {
-              eachDateTotalAmt -= eachExp.expense_amount;
-            } else {
-              eachDateTotalAmt += eachExp.expense_amount;
-            }
-          }
-        }
-
-        // Create a FilterExpenseModel for this date and add it to our results
-        filteredExpenses.add(FilterExpenseModel(
-            totalAmt: eachDateTotalAmt,
-            type: eachdate, // using the date as the "type"
-            mexpenses: eachDateExpense));
-      }
-      /*
-    ++++++++++++++++++++++++++++++
-    For Month
-    ++++++++++++++++++++++++++++++
-     */
-    } else if (filterType == 1) {
-      DateFormat yeardf = DateFormat.M();
-      List uniqMonths = [];
-      //get all uniq months
-      for (ExpenseModel eachExp in allexpense) {
-        String month = yeardf.format(DateTime.fromMillisecondsSinceEpoch(
-            int.parse(eachExp.expense_createdAt)));
-        if (!uniqMonths.contains(month)) {
-          uniqMonths.add(month);
-        }
-      }
-
-      print(uniqMonths);
-
-      //process expenses for each month
-      for (String month in uniqMonths) {
-        num eachMonthTotalAmt = 0.0;
-        List<ExpenseModel> eachMonthExpense = [];
-        print(month);
-        for (ExpenseModel eachExp in allexpense) {
-          //get single month
-          String singlemonth = yeardf.format(
-              DateTime.fromMillisecondsSinceEpoch(
-                  int.parse(eachExp.expense_createdAt)));
-          if (singlemonth == month) {
-            eachMonthExpense.add(eachExp);
-            if (eachExp.expense_type == "Debit") {
-              eachMonthTotalAmt -= eachExp.expense_amount;
-            } else {
-              eachMonthTotalAmt += eachExp.expense_amount;
-            }
-          }
-        }
-        filteredExpenses.add(FilterExpenseModel(
-            totalAmt: eachMonthTotalAmt,
-            type: month,
-            mexpenses: eachMonthExpense));
-      }
-      /*
-    ++++++++++++++++++++++++++++++
-    For Year
-    ++++++++++++++++++++++++++++++
-     */
-    } else {}
   }
 
   Widget expenseList() {
@@ -425,5 +326,134 @@ class _HomePageState extends State<HomePage> {
         );
       },
     );
+  }
+
+  void filterExpense(
+      {required filterType, required List<ExpenseModel> allexpense}) {
+    filteredExpenses.clear();
+    /*
+    ++++++++++++++++++++++++++++++
+    For Date
+    ++++++++++++++++++++++++++++++
+     */
+    if (filterType == 0) {
+      //0 for date
+      List<String> uniqDates = [];
+
+      // Find unique dates
+      for (ExpenseModel eachExp in allexpense) {
+        String alldates = df.format(DateTime.fromMillisecondsSinceEpoch(
+            int.parse(eachExp.expense_createdAt)));
+        if (!uniqDates.contains(alldates)) {
+          uniqDates.add(alldates);
+        }
+      }
+
+      // Process expenses for each date
+      for (String eachdate in uniqDates) {
+        num eachDateTotalAmt = 0.0; //this is the total amount of each date
+        List<ExpenseModel> eachDateExpense =
+            []; //this will store all expenses of each date
+
+        for (ExpenseModel eachExp in allexpense) {
+          //this  will give us single date from uniq dates
+          String singledate = df.format(DateTime.fromMillisecondsSinceEpoch(
+              int.parse(eachExp.expense_createdAt)));
+          if (eachdate == singledate) {
+            eachDateExpense.add(eachExp);
+            if (eachExp.expense_type == "Debit") {
+              eachDateTotalAmt -= eachExp.expense_amount;
+            } else {
+              eachDateTotalAmt += eachExp.expense_amount;
+            }
+          }
+        }
+
+        // Create a FilterExpenseModel for this date and add it to our results
+        filteredExpenses.add(FilterExpenseModel(
+            totalAmt: eachDateTotalAmt,
+            type: eachdate, // using the date as the "type"
+            mexpenses: eachDateExpense));
+      }
+      /*
+    ++++++++++++++++++++++++++++++
+    For Month
+    ++++++++++++++++++++++++++++++
+     */
+    } else if (filterType == 1) {
+      //1 for month
+      DateFormat monthdf = DateFormat.M();
+      List uniqMonths = [];
+      //get all uniq months
+      for (ExpenseModel eachExp in allexpense) {
+        String month = monthdf.format(DateTime.fromMillisecondsSinceEpoch(
+            int.parse(eachExp.expense_createdAt)));
+        if (!uniqMonths.contains(month)) {
+          uniqMonths.add(month);
+        }
+      }
+
+      //process expenses for each month
+      for (String month in uniqMonths) {
+        num eachMonthTotalAmt = 0.0;
+        List<ExpenseModel> eachMonthExpense = [];
+        for (ExpenseModel eachExp in allexpense) {
+          //get single month
+          String singlemonth = monthdf.format(
+              DateTime.fromMillisecondsSinceEpoch(
+                  int.parse(eachExp.expense_createdAt)));
+          if (singlemonth == month) {
+            eachMonthExpense.add(eachExp);
+            if (eachExp.expense_type == "Debit") {
+              eachMonthTotalAmt -= eachExp.expense_amount;
+            } else {
+              eachMonthTotalAmt += eachExp.expense_amount;
+            }
+          }
+        }
+        filteredExpenses.add(FilterExpenseModel(
+            totalAmt: eachMonthTotalAmt,
+            type: month,
+            mexpenses: eachMonthExpense));
+      }
+      /*
+    ++++++++++++++++++++++++++++++
+    For Year
+    ++++++++++++++++++++++++++++++
+     */
+    } else {
+      DateFormat yeardf = DateFormat.y();
+      //Now we have to get all uniqyear
+      List uniqYear = [];
+      for (ExpenseModel eachExp in allexpense) {
+        String year = yeardf.format(DateTime.fromMillisecondsSinceEpoch(
+            int.parse(eachExp.expense_createdAt)));
+        if (!uniqYear.contains(year)) {
+          uniqYear.add(year);
+        }
+      }
+      //process expenses for each year
+      for (String year in uniqYear) {
+        num eachYearTotalAmt = 0.0;
+        List<ExpenseModel> eachYearExpense = [];
+        for (ExpenseModel eachExp in allexpense) {
+          String singleyear = yeardf.format(DateTime.fromMillisecondsSinceEpoch(
+              int.parse(eachExp.expense_createdAt)));
+          if (singleyear == year) {
+            eachYearExpense.add(eachExp);
+            if (eachExp.expense_type == "Debit") {
+              eachYearTotalAmt -= eachExp.expense_amount;
+            } else {
+              eachYearTotalAmt += eachExp.expense_amount;
+            }
+          }
+        }
+
+        filteredExpenses.add(FilterExpenseModel(
+            totalAmt: eachYearTotalAmt,
+            type: year,
+            mexpenses: eachYearExpense));
+      }
+    }
   }
 }
