@@ -319,9 +319,11 @@ class _addNewExpenseState extends State<AddNewExpense> {
                     const SizedBox(height: 25),
                     //Add Expense Button
                     BlocListener<ExpBloc, ExpState>(
-                        listenWhen: (prev, curr) {
-                          return curr is ExpSuccessState;
-                        },
+                        // listenWhen: (prev, curr) {
+                        //   // Only listen for the first success state transition
+                        //   return prev is! ExpSuccessState &&
+                        //       curr is ExpSuccessState;
+                        // },
                         listener: (context, state) {
                           if (state is ExpSuccessState) {
                             ScaffoldMessenger.of(context).showSnackBar(
@@ -329,13 +331,7 @@ class _addNewExpenseState extends State<AddNewExpense> {
                                   content:
                                       Text("Expense Added Successfully!!")),
                             );
-
-                            Future.delayed(Duration(milliseconds: 300), () {
-                              if (mounted) {
-                                Navigator.pushReplacementNamed(
-                                    context, AppRoutes.ROUTE_BASEPAGE);
-                              }
-                            });
+                            Navigator.pop(context);
                           } else if (state is ExpErrorState) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(content: Text(state.errorMsg)),

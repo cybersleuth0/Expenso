@@ -11,6 +11,7 @@ import '../data/Model/expCategoryModel.dart';
 
 class AppConstant {
   static const String ISLOGIN = "is_login";
+  static int initcalled = 0;
   static List<expCategoryModel> mcat = [
     expCategoryModel(
         id: 0,

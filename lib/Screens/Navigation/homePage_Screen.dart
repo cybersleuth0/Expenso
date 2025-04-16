@@ -1,3 +1,4 @@
+import 'package:expenso/App_Constant/constant.dart';
 import 'package:expenso/Screens/expense/Bloc/expBloc.dart';
 import 'package:expenso/Screens/expense/Bloc/expState.dart';
 import 'package:expenso/data/Model/FilterModel.dart';
@@ -15,16 +16,24 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   //This will store all filtered data
-  List<FilterExpenseModel> allExpense = [];
+  List<FilterExpenseModel> filteredExpenses = [];
 
   //Lets create a dateFormat
   DateFormat df = DateFormat.yMMMd();
 
+  String filterDropdownValue = "Date";
+  List<String> filterDropdownValueList = ["Date", "Month", "Year"];
+
+  int filterFlag = 0;
+
   @override
   void initState() {
     super.initState();
+
+    print("init called: ${AppConstant.initcalled}");
     // Fetch all expenses on app start
     context.read<ExpBloc>().add(FetchExpEvent());
+    AppConstant.initcalled++;
   }
 
   @override
@@ -47,7 +56,7 @@ class _HomePageState extends State<HomePage> {
       body: Padding(
         padding: EdgeInsets.all(10.0),
         child: BlocBuilder<ExpBloc, ExpState>(
-          buildWhen: (prev, curr) => prev != curr,
+          // buildWhen: (prev, curr) => prev != curr,
           builder: (context, state) {
             if (state is ExpLoadingState) {
               return Center(child: CircularProgressIndicator());
@@ -55,43 +64,69 @@ class _HomePageState extends State<HomePage> {
 
             if (state is ExpSuccessState) {
               //Filter Data here
-              filterExpenseByType(allexpense: state.allExpenseFromDb);
-
+              filterExpense(
+                  allexpense: state.allExpenseFromDb, filterType: filterFlag);
               return SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        CircleAvatar(
+                        Expanded(
+                            child: CircleAvatar(
                           radius: 25,
                           backgroundImage:
                               AssetImage("assets/images/boy_3d_image.jpg"),
-                        ),
-                        Text.rich(
-                          TextSpan(
-                            children: [
+                        )),
+                        Expanded(
+                            flex: 3,
+                            child: Text.rich(
                               TextSpan(
-                                text: 'Morning\n',
-                                style: TextStyle(
-                                    fontSize: 17,
-                                    fontFamily: "Poppins",
-                                    color: Colors.grey[600]),
+                                children: [
+                                  TextSpan(
+                                    text: 'Morning\n',
+                                    style: TextStyle(
+                                        fontSize: 17,
+                                        fontFamily: "Poppins",
+                                        color: Colors.grey[600]),
+                                  ),
+                                  TextSpan(
+                                    text: 'Błaszczykowski',
+                                    style: TextStyle(
+                                        fontSize: 22,
+                                        fontFamily: "Poppins",
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black87),
+                                  ),
+                                ],
                               ),
-                              TextSpan(
-                                text: 'Błaszczykowski',
-                                style: TextStyle(
-                                    fontSize: 22,
-                                    fontFamily: "Poppins",
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black87),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Text("This Month",
-                            style: TextStyle(fontFamily: "Poppins"))
+                            )),
+                        Expanded(
+                            flex: 2,
+                            child: DropdownMenu(
+                              initialSelection: filterDropdownValue,
+                              onSelected: (String? newValue) {
+                                filterDropdownValue = newValue!;
+                                if (filterDropdownValue == "Date") {
+                                  filterFlag = 0;
+                                } else if (filterDropdownValue == "Month") {
+                                  filterFlag = 1;
+                                } else {
+                                  filterFlag = 2;
+                                }
+                                setState(() {
+                                  print("Filter Flag: ${filterFlag}");
+                                });
+                              },
+                              dropdownMenuEntries:
+                                  filterDropdownValueList.map((newvalue) {
+                                return DropdownMenuEntry(
+                                    value: newvalue, label: newvalue);
+                              }).toList(),
+                              inputDecorationTheme: InputDecorationTheme(
+                                  contentPadding: EdgeInsets.only(left: 5),
+                                  border: InputBorder.none),
+                            ))
                       ],
                     ),
                     SizedBox(height: 15),
@@ -172,12 +207,19 @@ class _HomePageState extends State<HomePage> {
                             fontWeight: FontWeight.w600,
                             fontFamily: "Poppins")),
                     SizedBox(height: 15),
-                    Column(
-                      children: [
-                        expenseList(),
-                        expenseList(),
-                      ],
-                    ),
+                    Container(
+                      height: MediaQuery.of(context).size.height *
+                          0.5, // Adjust as needed
+                      child: filteredExpenses.isEmpty
+                          ? Center(
+                              child: Text(
+                              "You Have No Expense\nClick On the + Icon to add...",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  fontSize: 17, fontFamily: "Poppins"),
+                            ))
+                          : expenseList(),
+                    )
                   ],
                 ),
               );
@@ -194,96 +236,194 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void filterExpenseByType({required List<ExpenseModel> allexpense}) {
-    List<String> uniqDates = [];
-    for (ExpenseModel eachExp in allexpense) {
-      //For filtering the date we need to get date First
-      String alldates = df.format(DateTime.fromMillisecondsSinceEpoch(
-          int.parse(eachExp.expense_createdAt)));
-      // print(alldates);
-      if (!uniqDates.contains(alldates)) {
-        uniqDates.add(alldates);
+  void filterExpense(
+      {required filterType, required List<ExpenseModel> allexpense}) {
+    filteredExpenses.clear();
+    /*
+    ++++++++++++++++++++++++++++++
+    For Date
+    ++++++++++++++++++++++++++++++
+     */
+    if (filterType == 0) {
+      List<String> uniqDates = [];
+
+      // Find unique dates
+      for (ExpenseModel eachExp in allexpense) {
+        String alldates = df.format(DateTime.fromMillisecondsSinceEpoch(
+            int.parse(eachExp.expense_createdAt)));
+        if (!uniqDates.contains(alldates)) {
+          uniqDates.add(alldates);
+        }
       }
-    }
-    print("Uniq Date ${uniqDates}");
+
+      // Process expenses for each date
+      for (String eachdate in uniqDates) {
+        num eachDateTotalAmt = 0.0; //this is the total amount of each date
+        List<ExpenseModel> eachDateExpense =
+            []; //this will store all expenses of each date
+
+        for (ExpenseModel eachExp in allexpense) {
+          //this  will give us single date from uniq dates
+          String singledate = df.format(DateTime.fromMillisecondsSinceEpoch(
+              int.parse(eachExp.expense_createdAt)));
+          if (eachdate == singledate) {
+            eachDateExpense.add(eachExp);
+            if (eachExp.expense_type == "Debit") {
+              eachDateTotalAmt -= eachExp.expense_amount;
+            } else {
+              eachDateTotalAmt += eachExp.expense_amount;
+            }
+          }
+        }
+
+        // Create a FilterExpenseModel for this date and add it to our results
+        filteredExpenses.add(FilterExpenseModel(
+            totalAmt: eachDateTotalAmt,
+            type: eachdate, // using the date as the "type"
+            mexpenses: eachDateExpense));
+      }
+      /*
+    ++++++++++++++++++++++++++++++
+    For Month
+    ++++++++++++++++++++++++++++++
+     */
+    } else if (filterType == 1) {
+      DateFormat yeardf = DateFormat.M();
+      List uniqMonths = [];
+      //get all uniq months
+      for (ExpenseModel eachExp in allexpense) {
+        String month = yeardf.format(DateTime.fromMillisecondsSinceEpoch(
+            int.parse(eachExp.expense_createdAt)));
+        if (!uniqMonths.contains(month)) {
+          uniqMonths.add(month);
+        }
+      }
+
+      print(uniqMonths);
+
+      //process expenses for each month
+      for (String month in uniqMonths) {
+        num eachMonthTotalAmt = 0.0;
+        List<ExpenseModel> eachMonthExpense = [];
+        print(month);
+        for (ExpenseModel eachExp in allexpense) {
+          //get single month
+          String singlemonth = yeardf.format(
+              DateTime.fromMillisecondsSinceEpoch(
+                  int.parse(eachExp.expense_createdAt)));
+          if (singlemonth == month) {
+            eachMonthExpense.add(eachExp);
+            if (eachExp.expense_type == "Debit") {
+              eachMonthTotalAmt -= eachExp.expense_amount;
+            } else {
+              eachMonthTotalAmt += eachExp.expense_amount;
+            }
+          }
+        }
+        filteredExpenses.add(FilterExpenseModel(
+            totalAmt: eachMonthTotalAmt,
+            type: month,
+            mexpenses: eachMonthExpense));
+      }
+      /*
+    ++++++++++++++++++++++++++++++
+    For Year
+    ++++++++++++++++++++++++++++++
+     */
+    } else {}
   }
 
   Widget expenseList() {
-    return Container(
-      width: double.infinity,
-      margin: const EdgeInsets.all(8.0),
-      padding: const EdgeInsets.all(8.0),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: Colors.grey, width: 1),
-      ),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+    return ListView.builder(
+      itemCount: filteredExpenses.length,
+      itemBuilder: (context, index) {
+        FilterExpenseModel group = filteredExpenses[index];
+        return Container(
+          width: double.infinity,
+          margin: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(8.0),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: Colors.grey, width: 1),
+          ),
+          child: Column(
             children: [
-              Text("Tuesday, 14",
-                  style: TextStyle(
-                      fontFamily: "Poppins",
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600)),
-              SizedBox(width: 50),
-              Text("-\$100",
-                  style: TextStyle(
-                      fontFamily: "Poppins",
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600)),
+              // Header with date and total amount
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Text(group.type, // This is your date string
+                      style: TextStyle(
+                          fontFamily: "Poppins",
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600)),
+                  SizedBox(width: 50),
+                  Text(
+                      "${group.totalAmt >= 0 ? "+" : "-"}\$${group.totalAmt.abs().toStringAsFixed(2)}",
+                      style: TextStyle(
+                        fontFamily: "Poppins",
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: group.totalAmt >= 0 ? Colors.green : Colors.red,
+                      )),
+                ],
+              ),
+              SizedBox(height: 10),
+              Divider(color: Colors.grey, height: 2),
+              SizedBox(height: 10),
+
+              // Individual expenses for this date
+              ...group.mexpenses.map((expense) => Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 2),
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: ListTile(
+                        contentPadding: EdgeInsets.symmetric(horizontal: 8.0),
+                        leading: CircleAvatar(
+                          radius: 30,
+                          backgroundImage:
+                              AssetImage("assets/images/splash_img.jpg"),
+                          // If you have category-specific images, you could use:
+                          // backgroundImage: AssetImage("assets/images/${expense.category}.jpg"),
+                        ),
+                        title: Text.rich(
+                          TextSpan(
+                            children: [
+                              TextSpan(
+                                text: '${"Expense"}\n',
+                                style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.black87,
+                                    fontFamily: "Poppins"),
+                              ),
+                              TextSpan(
+                                text: expense.expense_description ?? "",
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    fontFamily: "Poppins",
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.grey),
+                              ),
+                            ],
+                          ),
+                        ),
+                        trailing: Text(
+                          "\$${expense.expense_amount.toStringAsFixed(2) ?? '0.00'}",
+                          textAlign: TextAlign.end,
+                          style: TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.grey,
+                              fontFamily: "Poppins"),
+                        ),
+                      ),
+                    ),
+                  )),
             ],
           ),
-          SizedBox(height: 10),
-          Divider(color: Colors.grey, height: 2),
-          SizedBox(height: 10),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 2),
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 10),
-              child: ListTile(
-                contentPadding: EdgeInsets.symmetric(horizontal: 8.0),
-                leading: CircleAvatar(
-                  radius: 30,
-                  backgroundImage: AssetImage("assets/images/splash_img.jpg"),
-                ),
-                title: Text.rich(
-                  TextSpan(
-                    children: [
-                      TextSpan(
-                        text: 'Shop\n',
-                        style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black87,
-                            fontFamily: "Poppins"),
-                      ),
-                      TextSpan(
-                        text: 'Błaszczykowski',
-                        style: TextStyle(
-                            fontSize: 16,
-                            fontFamily: "Poppins",
-                            fontWeight: FontWeight.bold,
-                            color: Colors.grey),
-                      ),
-                    ],
-                  ),
-                ),
-                trailing: Text(
-                  "\$90",
-                  textAlign: TextAlign.end,
-                  style: TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.grey,
-                      fontFamily: "Poppins"),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 }
