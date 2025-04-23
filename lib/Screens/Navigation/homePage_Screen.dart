@@ -149,7 +149,7 @@ class _HomePageState extends State<HomePage> {
                                           fontSize: 20,
                                           fontFamily: "Poppins")),
                                   SizedBox(height: 2),
-                                  Text("\$3,722",
+                                  Text("\₹3,722",
                                       style: TextStyle(
                                           color: Colors.white,
                                           fontSize: 25,
@@ -205,7 +205,7 @@ class _HomePageState extends State<HomePage> {
                             fontWeight: FontWeight.w600,
                             fontFamily: "Poppins")),
                     SizedBox(height: 15),
-                    //Expense Kust
+                    //Expense list
                     SizedBox(
                       height: MediaQuery.of(context).size.height * 0.5,
                       child: filteredExpenses.isEmpty
@@ -236,6 +236,8 @@ class _HomePageState extends State<HomePage> {
 
   Widget expenseList() {
     return ListView.builder(
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
       itemCount: filteredExpenses.length,
       itemBuilder: (context, index) {
         FilterExpenseModel group = filteredExpenses[index];
@@ -260,7 +262,7 @@ class _HomePageState extends State<HomePage> {
                           fontWeight: FontWeight.w600)),
                   SizedBox(width: 50),
                   Text(
-                      "${group.totalAmt >= 0 ? "+" : "-"}\$${group.totalAmt.abs().toStringAsFixed(2)}",
+                      "${group.totalAmt >= 0 ? "+" : "-"}\₹ ${group.totalAmt.abs().toStringAsFixed(2)}",
                       style: TextStyle(
                         fontFamily: "Poppins",
                         fontSize: 16,
@@ -310,7 +312,7 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ),
                         trailing: Text(
-                          "\$${expense.expense_amount.toStringAsFixed(2) ?? '0.00'}",
+                          "\₹${expense.expense_amount.toStringAsFixed(2) ?? '0.00'}",
                           textAlign: TextAlign.end,
                           style: TextStyle(
                               fontSize: 17,

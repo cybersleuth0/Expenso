@@ -319,11 +319,6 @@ class _addNewExpenseState extends State<AddNewExpense> {
                     const SizedBox(height: 25),
                     //Add Expense Button
                     BlocListener<ExpBloc, ExpState>(
-                        // listenWhen: (prev, curr) {
-                        //   // Only listen for the first success state transition
-                        //   return prev is! ExpSuccessState &&
-                        //       curr is ExpSuccessState;
-                        // },
                         listener: (context, state) {
                           if (state is ExpSuccessState) {
                             ScaffoldMessenger.of(context).showSnackBar(
