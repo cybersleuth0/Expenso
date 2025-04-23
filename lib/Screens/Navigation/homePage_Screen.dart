@@ -54,7 +54,6 @@ class _HomePageState extends State<HomePage> {
       body: Padding(
         padding: EdgeInsets.all(13.0),
         child: BlocBuilder<ExpBloc, ExpState>(
-          // buildWhen: (prev, curr) => prev != curr,
           builder: (context, state) {
             if (state is ExpLoadingState) {
               return Center(child: CircularProgressIndicator());
@@ -206,7 +205,8 @@ class _HomePageState extends State<HomePage> {
                             fontWeight: FontWeight.w600,
                             fontFamily: "Poppins")),
                     SizedBox(height: 15),
-                    Container(
+                    //Expense Kust
+                    SizedBox(
                       height: MediaQuery.of(context).size.height * 0.5,
                       child: filteredExpenses.isEmpty
                           ? Center(
@@ -253,7 +253,7 @@ class _HomePageState extends State<HomePage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  Text(group.type, // This is your date string
+                  Text(group.type, // This is our date string
                       style: TextStyle(
                           fontFamily: "Poppins",
                           fontSize: 16,
@@ -273,19 +273,19 @@ class _HomePageState extends State<HomePage> {
               Divider(color: Colors.grey, height: 2),
               SizedBox(height: 10),
 
-              // Individual expenses for this date
+              // Individual expenses for each date
               ...group.mexpenses.map((expense) => Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 2),
                     child: Padding(
                       padding: const EdgeInsets.only(bottom: 10),
                       child: ListTile(
                         contentPadding: EdgeInsets.symmetric(horizontal: 8.0),
-                        leading: CircleAvatar(
-                          radius: 30,
-                          backgroundImage:
-                              AssetImage("assets/images/splash_img.jpg"),
-                          // If you have category-specific images, you could use:
-                          // backgroundImage: AssetImage("assets/images/${expense.category}.jpg"),
+                        leading: Image.asset(AppConstant.mcat
+                            .where((item) {
+                              return item.id == expense.expense_category_id;
+                            })
+                            .toList()[0]
+                            .imgPath,
                         ),
                         title: Text.rich(
                           TextSpan(
