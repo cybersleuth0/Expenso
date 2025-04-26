@@ -1,4 +1,4 @@
-import 'package:expenso/data/Model/expense_model.dart';
+import 'package:expenso/data/Model/FilterModel.dart';
 
 /*
 - Initial (empty) state
@@ -17,7 +17,7 @@ class ExpLoadingState extends ExpState {}
 //- Success state (show data)
 class ExpSuccessState extends ExpState {
   //Here we have to specify what kind of data we are gonna show
-  final List<ExpenseModel> allExpenseFromDb;
+  final List<FilterExpenseModel> allExpenseFromDb;
 
   ExpSuccessState({required this.allExpenseFromDb});
 }

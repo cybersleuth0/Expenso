@@ -9,5 +9,10 @@ class AddExpEvent extends ExpEvent {
   AddExpEvent({required this.newExpmodel});
 }
 
-class FetchExpEvent extends ExpEvent {}
+//class FetchExpEvent extends ExpEvent {}
 
+class GetInitialExpEvent extends ExpEvent {
+  int type;
+
+  GetInitialExpEvent({this.type = 1});
+}

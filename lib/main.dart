@@ -21,7 +21,9 @@ void main() {
                 userRepository:
                     UserRepository(db_helper: Db_Helper.getInstance()))),
         BlocProvider(
-            create: (context) => ExpBloc(expenseRepository: ExpenseRepository(db_helper: Db_Helper.getInstance())))
+            create: (context) => ExpBloc(
+                expenseRepository:
+                    ExpenseRepository(db_helper: Db_Helper.getInstance()))),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

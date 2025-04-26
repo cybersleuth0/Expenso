@@ -2,10 +2,9 @@ import 'package:expenso/App_Constant/constant.dart';
 import 'package:expenso/Screens/expense/Bloc/expBloc.dart';
 import 'package:expenso/Screens/expense/Bloc/expState.dart';
 import 'package:expenso/data/Model/FilterModel.dart';
-import 'package:expenso/data/Model/expense_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../expense/Bloc/expEvents.dart';
 
@@ -15,23 +14,23 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  //This will store all filtered data
-  List<FilterExpenseModel> filteredExpenses = [];
-
-  //Lets create a dateFormat
-  DateFormat df = DateFormat.yMMMd();
+  var userName;
 
   String filterDropdownValue = "Date";
-  List<String> filterDropdownValueList = ["Date", "Month", "Year"];
-
-  int filterFlag = 0;
+  List<String> filterDropdownValueList = ["Date", "Month", "Year", "Category"];
+  List<FilterExpenseModel> filteredExpenses = [];
 
   @override
   void initState() {
     super.initState();
     // Fetch all expenses on app start
-    context.read<ExpBloc>().add(FetchExpEvent());
+    context.read<ExpBloc>().add(GetInitialExpEvent());
     AppConstant.initcalled++;
+    getUsername().then((value) {
+      setState(() {
+        userName = value;
+      });
+    });
   }
 
   @override
@@ -42,9 +41,10 @@ class _HomePageState extends State<HomePage> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text("Expenso",
+            Text("EXPENSO",
                 style: TextStyle(
-                    fontSize: 28,
+                    letterSpacing: 2,
+                    fontSize: 25,
                     fontFamily: "Poppins",
                     fontWeight: FontWeight.w600)),
             Icon(Icons.search, size: 30),
@@ -61,8 +61,10 @@ class _HomePageState extends State<HomePage> {
 
             if (state is ExpSuccessState) {
               //Filter Data here
-              filterExpense(
-                  allexpense: state.allExpenseFromDb, filterType: filterFlag);
+              // filterExpense(
+              //     allexpense: state.allExpenseFromDb, filterType: filterFlag);
+              filteredExpenses=state.allExpenseFromDb;
+
               return SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -83,14 +85,14 @@ class _HomePageState extends State<HomePage> {
                                   TextSpan(
                                     text: 'Morning\n',
                                     style: TextStyle(
-                                        fontSize: 17,
+                                        fontSize: 14,
                                         fontFamily: "Poppins",
                                         color: Colors.grey[600]),
                                   ),
                                   TextSpan(
-                                    text: 'Błaszczykowski',
+                                    text: '$userName',
                                     style: TextStyle(
-                                        fontSize: 22,
+                                        fontSize: 18,
                                         fontFamily: "Poppins",
                                         fontWeight: FontWeight.w500,
                                         color: Colors.black87),
@@ -105,13 +107,27 @@ class _HomePageState extends State<HomePage> {
                               onSelected: (String? newValue) {
                                 filterDropdownValue = newValue!;
                                 if (filterDropdownValue == "Date") {
-                                  filterFlag = 0; //0 for date
+                                  context
+                                      .read<ExpBloc>()
+                                      .add(GetInitialExpEvent(type: 0));
+                                  //filterFlag = 0; //0 for date
                                 } else if (filterDropdownValue == "Month") {
-                                  filterFlag = 1; //0 for month
+                                  context
+                                      .read<ExpBloc>()
+                                      .add(GetInitialExpEvent(type: 1));
+                                  //filterFlag = 1; //0 for month
+                                } else if (filterDropdownValue == "Year") {
+                                  context
+                                      .read<ExpBloc>()
+                                      .add(GetInitialExpEvent(type: 2));
+                                  //filterFlag = 2; //0 for year
                                 } else {
-                                  filterFlag = 2; //0 for year
+                                  context
+                                      .read<ExpBloc>()
+                                      .add(GetInitialExpEvent(type: 3));
+                                  //filterFlag = 3; //0 for Category
                                 }
-                                setState(() {});
+                                //setState(() {});
                               },
                               dropdownMenuEntries:
                                   filterDropdownValueList.map((newvalue) {
@@ -119,6 +135,8 @@ class _HomePageState extends State<HomePage> {
                                     value: newvalue, label: newvalue);
                               }).toList(),
                               inputDecorationTheme: InputDecorationTheme(
+                                  labelStyle: TextStyle(
+                                      fontFamily: "Poppins", fontSize: 18),
                                   contentPadding: EdgeInsets.only(left: 5),
                                   border: InputBorder.none),
                             ))
@@ -149,7 +167,7 @@ class _HomePageState extends State<HomePage> {
                                           fontSize: 20,
                                           fontFamily: "Poppins")),
                                   SizedBox(height: 2),
-                                  Text("\₹3,722",
+                                  Text("\₹ 3,722",
                                       style: TextStyle(
                                           color: Colors.white,
                                           fontSize: 25,
@@ -165,7 +183,7 @@ class _HomePageState extends State<HomePage> {
                                             color: Colors.red,
                                             borderRadius:
                                                 BorderRadius.circular(5)),
-                                        child: Text(' +\$240 ',
+                                        child: Text(' \₹ 240 ',
                                             style: TextStyle(
                                                 color: Colors.white,
                                                 fontSize: 15,
@@ -237,7 +255,6 @@ class _HomePageState extends State<HomePage> {
   Widget expenseList() {
     return ListView.builder(
       shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
       itemCount: filteredExpenses.length,
       itemBuilder: (context, index) {
         FilterExpenseModel group = filteredExpenses[index];
@@ -282,18 +299,19 @@ class _HomePageState extends State<HomePage> {
                       padding: const EdgeInsets.only(bottom: 10),
                       child: ListTile(
                         contentPadding: EdgeInsets.symmetric(horizontal: 8.0),
-                        leading: Image.asset(AppConstant.mcat
-                            .where((item) {
-                              return item.id == expense.expense_category_id;
-                            })
-                            .toList()[0]
-                            .imgPath,
+                        leading: Image.asset(
+                          AppConstant.mcat
+                              .where((item) {
+                                return item.id == expense.expense_category_id;
+                              })
+                              .toList()[0]
+                              .imgPath,
                         ),
                         title: Text.rich(
                           TextSpan(
                             children: [
                               TextSpan(
-                                text: '${"Expense"}\n',
+                                text: '${expense.expense_title}\n',
                                 style: TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.w500,
@@ -330,132 +348,10 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void filterExpense(
-      {required filterType, required List<ExpenseModel> allexpense}) {
-    filteredExpenses.clear();
-    /*
-    ++++++++++++++++++++++++++++++
-    For Date
-    ++++++++++++++++++++++++++++++
-     */
-    if (filterType == 0) {
-      //0 for date
-      List<String> uniqDates = [];
+  //get username
 
-      // Find unique dates
-      for (ExpenseModel eachExp in allexpense) {
-        String alldates = df.format(DateTime.fromMillisecondsSinceEpoch(
-            int.parse(eachExp.expense_createdAt)));
-        if (!uniqDates.contains(alldates)) {
-          uniqDates.add(alldates);
-        }
-      }
-
-      // Process expenses for each date
-      for (String eachdate in uniqDates) {
-        num eachDateTotalAmt = 0.0; //this is the total amount of each date
-        List<ExpenseModel> eachDateExpense =
-            []; //this will store all expenses of each date
-
-        for (ExpenseModel eachExp in allexpense) {
-          //this  will give us single date from uniq dates
-          String singledate = df.format(DateTime.fromMillisecondsSinceEpoch(
-              int.parse(eachExp.expense_createdAt)));
-          if (eachdate == singledate) {
-            eachDateExpense.add(eachExp);
-            if (eachExp.expense_type == "Debit") {
-              eachDateTotalAmt -= eachExp.expense_amount;
-            } else {
-              eachDateTotalAmt += eachExp.expense_amount;
-            }
-          }
-        }
-
-        // Create a FilterExpenseModel for this date and add it to our results
-        filteredExpenses.add(FilterExpenseModel(
-            totalAmt: eachDateTotalAmt,
-            type: eachdate, // using the date as the "type"
-            mexpenses: eachDateExpense));
-      }
-      /*
-    ++++++++++++++++++++++++++++++
-    For Month
-    ++++++++++++++++++++++++++++++
-     */
-    } else if (filterType == 1) {
-      //1 for month
-      DateFormat monthdf = DateFormat.M();
-      List uniqMonths = [];
-      //get all uniq months
-      for (ExpenseModel eachExp in allexpense) {
-        String month = monthdf.format(DateTime.fromMillisecondsSinceEpoch(
-            int.parse(eachExp.expense_createdAt)));
-        if (!uniqMonths.contains(month)) {
-          uniqMonths.add(month);
-        }
-      }
-
-      //process expenses for each month
-      for (String month in uniqMonths) {
-        num eachMonthTotalAmt = 0.0;
-        List<ExpenseModel> eachMonthExpense = [];
-        for (ExpenseModel eachExp in allexpense) {
-          //get single month
-          String singlemonth = monthdf.format(
-              DateTime.fromMillisecondsSinceEpoch(
-                  int.parse(eachExp.expense_createdAt)));
-          if (singlemonth == month) {
-            eachMonthExpense.add(eachExp);
-            if (eachExp.expense_type == "Debit") {
-              eachMonthTotalAmt -= eachExp.expense_amount;
-            } else {
-              eachMonthTotalAmt += eachExp.expense_amount;
-            }
-          }
-        }
-        filteredExpenses.add(FilterExpenseModel(
-            totalAmt: eachMonthTotalAmt,
-            type: month,
-            mexpenses: eachMonthExpense));
-      }
-      /*
-    ++++++++++++++++++++++++++++++
-    For Year
-    ++++++++++++++++++++++++++++++
-     */
-    } else {
-      DateFormat yeardf = DateFormat.y();
-      //Now we have to get all uniqyear
-      List uniqYear = [];
-      for (ExpenseModel eachExp in allexpense) {
-        String year = yeardf.format(DateTime.fromMillisecondsSinceEpoch(
-            int.parse(eachExp.expense_createdAt)));
-        if (!uniqYear.contains(year)) {
-          uniqYear.add(year);
-        }
-      }
-      //process expenses for each year
-      for (String year in uniqYear) {
-        num eachYearTotalAmt = 0.0;
-        List<ExpenseModel> eachYearExpense = [];
-        for (ExpenseModel eachExp in allexpense) {
-          String singleyear = yeardf.format(DateTime.fromMillisecondsSinceEpoch(
-              int.parse(eachExp.expense_createdAt)));
-          if (singleyear == year) {
-            eachYearExpense.add(eachExp);
-            if (eachExp.expense_type == "Debit") {
-              eachYearTotalAmt -= eachExp.expense_amount;
-            } else {
-              eachYearTotalAmt += eachExp.expense_amount;
-            }
-          }
-        }
-
-        filteredExpenses.add(FilterExpenseModel(
-            totalAmt: eachYearTotalAmt,
-            type: year,
-            mexpenses: eachYearExpense));
-      }
-    }
+  Future<String> getUsername() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString(AppConstant.CRTUSERNAME) ?? "";
   }
 }

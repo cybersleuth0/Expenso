@@ -107,6 +107,8 @@ class Db_Helper {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setInt(
           AppConstant.ISLOGIN, UserModel.fromMap(mdata[0]).user_id ?? 0);
+      prefs.setString(
+          AppConstant.CRTUSERNAME, UserModel.fromMap(mdata[0]).user_name??"working");
     }
     return mdata.isNotEmpty;
   }

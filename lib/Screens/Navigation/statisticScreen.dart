@@ -108,7 +108,7 @@ class _StatisticPageState extends State<StatisticPage> {
                             ),
                             SizedBox(height: 2),
                             Text(
-                              "\$3,722",
+                              "\₹ 3,722",
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 25,
@@ -136,7 +136,7 @@ class _StatisticPageState extends State<StatisticPage> {
                 ],
               ),
               SizedBox(height: 2),//Expense BreakDown
-              Text("Limit: \$2,000 / Week",
+              Text("Limit: \₹2,000 / Week",
                   style: TextStyle(
                   color: Colors.black87,
                       fontSize: 15,
