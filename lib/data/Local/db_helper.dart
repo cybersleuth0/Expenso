@@ -107,8 +107,8 @@ class Db_Helper {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setInt(
           AppConstant.ISLOGIN, UserModel.fromMap(mdata[0]).user_id ?? 0);
-      prefs.setString(
-          AppConstant.CRTUSERNAME, UserModel.fromMap(mdata[0]).user_name??"working");
+      prefs.setString(AppConstant.CRTUSERNAME,
+          UserModel.fromMap(mdata[0]).user_name ?? "working");
     }
     return mdata.isNotEmpty;
   }
@@ -128,7 +128,10 @@ class Db_Helper {
   //this function will used for getting all the expenses
   Future<List<ExpenseModel>> fetchallExpenses() async {
     var db = await getDb();
-    List<Map<String, dynamic>> expFromDB = await db.query(EXPENSE_TABLE);
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int currentuserID = prefs.getInt(AppConstant.ISLOGIN) ?? 0;
+    List<Map<String, dynamic>> expFromDB =
+        await db.query(EXPENSE_TABLE, where: "$USER_ID=?", whereArgs: [currentuserID]);
     List<ExpenseModel> allExpense = [];
     for (Map<String, dynamic> eachItem in expFromDB) {
       allExpense.add(ExpenseModel.fromMap(eachItem));

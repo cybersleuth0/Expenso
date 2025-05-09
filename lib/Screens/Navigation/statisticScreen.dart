@@ -1,6 +1,5 @@
-import 'package:expenso/App_Constant/constant.dart';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class StatisticPage extends StatefulWidget {
   @override
@@ -17,41 +16,11 @@ class _StatisticPageState extends State<StatisticPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Expanded(
-              flex: 7,
-              child: Text("Statistic",
-                  style: TextStyle(
-                      fontSize: 28,
-                      fontFamily: "Poppins",
-                      fontWeight: FontWeight.w600)),
-            ),
-            Expanded(
-                flex: 3,
-                child: DropdownMenu(
-                  initialSelection: filterDropdownValue,
-                  onSelected: (String? newValue) {
-                    filterDropdownValue = newValue!;
-                    if (filterDropdownValue == "Date") {
-                      filterFlag = 0; //0 for date
-                    } else if (filterDropdownValue == "Month") {
-                      filterFlag = 1; //0 for month
-                    } else {
-                      filterFlag = 2; //0 for year
-                    }
-                    setState(() {});
-                  },
-                  dropdownMenuEntries: filterDropdownValueList.map((newvalue) {
-                    return DropdownMenuEntry(value: newvalue, label: newvalue);
-                  }).toList(),
-                  inputDecorationTheme: InputDecorationTheme(
-                      contentPadding: EdgeInsets.only(left: 5),
-                      border: InputBorder.none),
-                ))
-          ],
-        ),
+        title: Text("Statistic",
+            style: TextStyle(
+                fontSize: 28,
+                fontFamily: "Poppins",
+                fontWeight: FontWeight.w600)),
       ),
       body: Padding(
         padding: EdgeInsets.all(13.0),
@@ -128,34 +97,104 @@ class _StatisticPageState extends State<StatisticPage> {
               SizedBox(height: 15),
               Row(
                 children: [
-                  Text("Expense Breakdown",
-                      style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                          fontFamily: "Poppins")),
+                  Expanded(
+                    flex: 7,
+                    child: Text("Expense Breakdown",
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                            fontFamily: "Poppins")),
+                  ),
+                  SizedBox(width: 10),
+                  Expanded(
+                    flex: 3,
+                      child: DropdownMenu(
+                        initialSelection: filterDropdownValue,
+                        onSelected: (String? newValue) {
+                          filterDropdownValue = newValue!;
+                          if (filterDropdownValue == "Date") {
+                            filterFlag = 0; //0 for date
+                          } else if (filterDropdownValue == "Month") {
+                            filterFlag = 1; //0 for month
+                          } else {
+                            filterFlag = 2; //0 for year
+                          }
+                          setState(() {});
+                        },
+                        dropdownMenuEntries:
+                            filterDropdownValueList.map((newvalue) {
+                          return DropdownMenuEntry(
+                              value: newvalue, label: newvalue);
+                        }).toList(),
+                        inputDecorationTheme: InputDecorationTheme(
+                            contentPadding: EdgeInsets.only(left: 5),
+                            border: InputBorder.none),
+                      ))
                 ],
               ),
-              SizedBox(height: 2),//Expense BreakDown
+              SizedBox(height: 2), //Expense BreakDown
               Text("Limit: \₹2,000 / Week",
                   style: TextStyle(
-                  color: Colors.black87,
+                      color: Colors.black87,
                       fontSize: 15,
                       fontFamily: "Poppins")), //Limit
+              //bar chart
+              SizedBox(height: 10), //Expense BreakDown
+              SizedBox(
+                height: 200,
+                child: BarChart(
+                    curve: Curves.linear,
+                    duration: Duration(seconds: 3),
+                    BarChartData(
+                        gridData: FlGridData(show: false),
+                        maxY: 100,
+                        barGroups: [
+                          BarChartGroupData(
+                            x: 5,
+                            barRods: [
+                              BarChartRodData(
 
-              // ElevatedButton(
-              //     style: ElevatedButton.styleFrom(
-              //         backgroundColor: Colors.white54,
-              //         padding: EdgeInsets.symmetric(horizontal: 50)),
-              //     onPressed: () async {
-              //       var prefs = await SharedPreferences.getInstance();
-              //       prefs.remove(AppConstant.ISLOGIN);
-              //       Navigator.pushReplacementNamed(
-              //           context, AppRoutes.ROUTE_LOGIN);
-              //     },
-              //     child: Text(
-              //       "LogOut",
-              //       style: TextStyle(fontSize: 28),
-              //     ))
+                                  toY: 10,
+                                  width: 25,
+                                  color: Colors.amber,
+                                  borderRadius: BorderRadius.vertical(
+                                      bottom: Radius.zero, top: Radius.zero))
+                            ],
+                          ),
+                          BarChartGroupData(x: 10, barRods: [
+                            BarChartRodData(
+                                toY: 20,
+                                width: 25,
+                                color: Colors.black38,
+                                borderRadius: BorderRadius.vertical(
+                                    bottom: Radius.zero, top: Radius.zero))
+                          ]),
+                          BarChartGroupData(x: 15, barRods: [
+                            BarChartRodData(
+                                toY: 30,
+                                width: 25,
+                                color: Colors.blue,
+                                borderRadius: BorderRadius.vertical(
+                                    bottom: Radius.zero, top: Radius.zero))
+                          ]),
+                          BarChartGroupData(x: 20, barRods: [
+                            BarChartRodData(
+                                toY: 40,
+                                width: 25,
+                                color: Colors.deepPurple,
+                                borderRadius: BorderRadius.vertical(
+                                    bottom: Radius.zero, top: Radius.zero))
+                          ]),
+                          BarChartGroupData(x: 25, barRods: [
+                            BarChartRodData(
+                                toY: 50,
+                                width: 25,
+                                color: Colors.lightGreen,
+                                borderRadius: BorderRadius.vertical(
+                                    bottom: Radius.zero, top: Radius.zero))
+                          ]),
+                        ])),
+              ),
             ],
           ),
         ),

@@ -350,7 +350,7 @@ class _HomePageState extends State<HomePage> {
 
   //get username
 
-  Future<String> getUsername() async {
+  static Future<String> getUsername() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString(AppConstant.CRTUSERNAME) ?? "";
   }

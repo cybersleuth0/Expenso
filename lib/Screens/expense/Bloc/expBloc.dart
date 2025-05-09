@@ -30,6 +30,7 @@ class ExpBloc extends Bloc<ExpEvent, ExpState> {
         emit(ExpErrorState(errorMsg: "Something Went Wrong!!"));
       }
     });
+
     on<GetInitialExpEvent>((event, emit) async {
       emit(ExpLoadingState());
       List<ExpenseModel> allExpenses = await expenseRepository.getAllExpenses();

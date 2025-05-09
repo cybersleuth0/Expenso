@@ -14,5 +14,5 @@ class AddExpEvent extends ExpEvent {
 class GetInitialExpEvent extends ExpEvent {
   int type;
 
-  GetInitialExpEvent({this.type = 1});
+  GetInitialExpEvent({this.type = 0});
 }

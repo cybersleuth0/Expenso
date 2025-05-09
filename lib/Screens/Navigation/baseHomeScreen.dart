@@ -1,3 +1,5 @@
+import 'package:expenso/Screens/Navigation/notificationScreen.dart';
+import 'package:expenso/Screens/Navigation/userProfileScreen.dart';
 import 'package:expenso/Screens/expense/addExpense_Screen.dart';
 import 'package:flutter/material.dart';
 
@@ -16,7 +18,12 @@ class _BasePageState extends State<BasePage> {
   @override
   void initState() {
     super.initState();
-    _pages = [HomePage(), StatisticPage()];
+    _pages = [
+      HomePage(),
+      StatisticPage(),
+      notificationPage(),
+      profileScreenPage()
+    ];
   }
 
   void _onTabTapped(int index) {
@@ -43,6 +50,14 @@ class _BasePageState extends State<BasePage> {
             icon: Icon(Icons.bar_chart),
             label: 'Stats',
           ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.notifications_none),
+            label: 'Notifications',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profile',
+          )
         ],
       ),
       floatingActionButton: FloatingActionButton(
@@ -55,7 +70,6 @@ class _BasePageState extends State<BasePage> {
         backgroundColor: Colors.pinkAccent,
         child: Icon(Icons.add, size: 28, color: Colors.white),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 }
