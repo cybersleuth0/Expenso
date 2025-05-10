@@ -1,12 +1,12 @@
 import 'package:expenso/App_Constant/constant.dart';
-import 'package:expenso/Screens/expense/Bloc/expBloc.dart';
-import 'package:expenso/Screens/expense/Bloc/expState.dart';
+import 'package:expenso/Bloc/ExpBloc/expBloc.dart';
+import 'package:expenso/Bloc/ExpBloc/expState.dart';
 import 'package:expenso/data/Model/FilterModel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../expense/Bloc/expEvents.dart';
+import '../../Bloc/ExpBloc/expEvents.dart';
 
 class HomePage extends StatefulWidget {
   @override

@@ -1,5 +1,11 @@
+import 'package:expenso/Bloc/ExpBloc/expBloc.dart';
+import 'package:expenso/Bloc/ExpBloc/expEvents.dart';
+import 'package:expenso/Bloc/ExpBloc/expState.dart';
+import 'package:expenso/data/Model/FilterModel.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 
 class StatisticPage extends StatefulWidget {
   @override
@@ -7,10 +13,25 @@ class StatisticPage extends StatefulWidget {
 }
 
 class _StatisticPageState extends State<StatisticPage> {
-  String filterDropdownValue = "Date";
-  List<String> filterDropdownValueList = ["Date", "Month", "Year"];
+  String filterDropdownValue = "Month";
+  List<String> filterDropdownValueList = ["Month", "Year"];
 
-  int filterFlag = 0;
+  int filterFlag = 1;
+
+  // List<Map<String, dynamic>> graphData = [
+  //   {"x": 5, "y": 10.toDouble()},
+  //   {"x": 10, "y": 20.toDouble()},
+  //   {"x": 15, "y": 40.toDouble()},
+  //   {"x": 20, "y": 60.toDouble()},
+  //   {"x": 25, "y": 80.toDouble()},
+  // ];
+  DateFormat? dateformater;
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<ExpBloc>().add(GetInitialExpEvent(type: filterFlag));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +98,7 @@ class _StatisticPageState extends State<StatisticPage> {
                             ),
                             SizedBox(height: 2),
                             Text(
-                              "\₹ 3,722",
+                              "₹ 3,722",
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 25,
@@ -112,12 +133,11 @@ class _StatisticPageState extends State<StatisticPage> {
                         initialSelection: filterDropdownValue,
                         onSelected: (String? newValue) {
                           filterDropdownValue = newValue!;
-                          if (filterDropdownValue == "Date") {
-                            filterFlag = 0; //0 for date
-                          } else if (filterDropdownValue == "Month") {
-                            filterFlag = 1; //0 for month
+
+                          if (filterDropdownValue == "Month") {
+                            filterFlag = 1;
                           } else {
-                            filterFlag = 2; //0 for year
+                            filterFlag = 2;
                           }
                           setState(() {});
                         },
@@ -139,62 +159,57 @@ class _StatisticPageState extends State<StatisticPage> {
                       fontSize: 15,
                       fontFamily: "Poppins")), //Limit
               //bar chart
-              SizedBox(height: 10), //Expense BreakDown
-              SizedBox(
-                height: 200,
-                child: BarChart(
-                    curve: Curves.linear,
-                    duration: Duration(seconds: 3),
-                    BarChartData(
-                        gridData: FlGridData(show: false),
-                        maxY: 100,
-                        barGroups: [
-                          BarChartGroupData(
-                            x: 5,
+              SizedBox(height: 20), //Expense BreakDown
+              BlocBuilder<ExpBloc, ExpState>(builder: (context, state) {
+                if (state is ExpSuccessState) {
+                  List<FilterExpenseModel> mData = state.allExpenseFromDb;
+                  return SizedBox(
+                    height: 200,
+                    child: BarChart(
+                      curve: Curves.linear,
+                      duration: Duration(seconds: 3),
+                      BarChartData(
+                        titlesData: FlTitlesData(
+                            topTitles: AxisTitles(
+                                sideTitles: SideTitles(showTitles: false)),
+                            rightTitles: AxisTitles(
+                                sideTitles: SideTitles(showTitles: false))),
+                        gridData: FlGridData(
+                          show: false,
+                        ),
+                        barGroups: mData.map((element) {
+                          DateTime parsedDate = DateTime
+                              .fromMicrosecondsSinceEpoch(
+                              int.parse(element.type));
+                          print(parsedDate);
+
+                          int xValue = filterFlag == 1
+                              ? int.parse(
+                              DateFormat("MM").format(parsedDate)) // month
+                              : int.parse(DateFormat("yyyy")
+                              .format(parsedDate)); // year
+                          return BarChartGroupData(
+                            x: xValue,
                             barRods: [
                               BarChartRodData(
-
-                                  toY: 10,
-                                  width: 25,
-                                  color: Colors.amber,
-                                  borderRadius: BorderRadius.vertical(
-                                      bottom: Radius.zero, top: Radius.zero))
+                                toY: element.totalAmt.toDouble(),
+                                width: 25,
+                                color: Color(0xff5967cd),
+                                borderRadius: BorderRadius.vertical(
+                                  top: Radius.circular(5),
+                                  bottom: Radius.zero,
+                                ),
+                              ),
                             ],
-                          ),
-                          BarChartGroupData(x: 10, barRods: [
-                            BarChartRodData(
-                                toY: 20,
-                                width: 25,
-                                color: Colors.black38,
-                                borderRadius: BorderRadius.vertical(
-                                    bottom: Radius.zero, top: Radius.zero))
-                          ]),
-                          BarChartGroupData(x: 15, barRods: [
-                            BarChartRodData(
-                                toY: 30,
-                                width: 25,
-                                color: Colors.blue,
-                                borderRadius: BorderRadius.vertical(
-                                    bottom: Radius.zero, top: Radius.zero))
-                          ]),
-                          BarChartGroupData(x: 20, barRods: [
-                            BarChartRodData(
-                                toY: 40,
-                                width: 25,
-                                color: Colors.deepPurple,
-                                borderRadius: BorderRadius.vertical(
-                                    bottom: Radius.zero, top: Radius.zero))
-                          ]),
-                          BarChartGroupData(x: 25, barRods: [
-                            BarChartRodData(
-                                toY: 50,
-                                width: 25,
-                                color: Colors.lightGreen,
-                                borderRadius: BorderRadius.vertical(
-                                    bottom: Radius.zero, top: Radius.zero))
-                          ]),
-                        ])),
-              ),
+                          );
+                        }).toList(),
+                        maxY: 100,
+                      ),
+                    ),
+                  );
+                }
+                return Container();
+              })
             ],
           ),
         ),

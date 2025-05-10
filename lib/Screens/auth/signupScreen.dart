@@ -1,10 +1,10 @@
 import 'package:expenso/App_Constant/constant.dart';
-import 'package:expenso/Screens/auth/RegisterBloc/register_bloc.dart';
-import 'package:expenso/Screens/auth/RegisterBloc/register_event.dart';
-import 'package:expenso/Screens/auth/RegisterBloc/register_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../Bloc/RegisterBloc/register_bloc.dart';
+import '../../Bloc/RegisterBloc/register_event.dart';
+import '../../Bloc/RegisterBloc/register_state.dart';
 import '../../data/Model/user_model.dart';
 
 class Signuppage extends StatefulWidget {

@@ -1,9 +1,10 @@
 import 'package:expenso/App_Constant/constant.dart';
-import 'package:expenso/Screens/auth/LoginBloc/LoginBloc.dart';
-import 'package:expenso/Screens/auth/LoginBloc/LoginEvent.dart';
-import 'package:expenso/Screens/auth/LoginBloc/LoginState.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../Bloc/LoginBloc/LoginBloc.dart';
+import '../../Bloc/LoginBloc/LoginEvent.dart';
+import '../../Bloc/LoginBloc/LoginState.dart';
 
 class LoginPage extends StatefulWidget {
   @override

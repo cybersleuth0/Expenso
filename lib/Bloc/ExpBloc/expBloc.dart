@@ -1,6 +1,6 @@
 import 'package:expenso/App_Constant/constant.dart';
-import 'package:expenso/Screens/expense/Bloc/expEvents.dart';
-import 'package:expenso/Screens/expense/Bloc/expState.dart';
+import 'package:expenso/Bloc/ExpBloc/expEvents.dart';
+import 'package:expenso/Bloc/ExpBloc/expState.dart';
 import 'package:expenso/data/Model/FilterModel.dart';
 import 'package:expenso/data/Model/expense_model.dart';
 import 'package:expenso/data/repository/expenseRepository.dart';
