@@ -1,16 +1,35 @@
-# expenso
+# 💸 Expenso
 
-A new Flutter project.
+**Expenso** is a beautifully designed personal expense tracking app built using **Flutter** and **Bloc** state management. It helps users manage their daily income and expenses with ease and offers powerful filtering and visual insights.
 
-## Getting Started
+---
 
-This project is a starting point for a Flutter application.
+## 📱 Features
 
-A few resources to get you started if this is your first Flutter project:
+- ✅ Add, edit, and delete transactions (income or expense)
+- 📅 Filter transactions by date, month, year, or category
+- 📊 Graphical breakdown of spending patterns
+- 💾 Offline data storage using **SQLite**
+- 🔐 Login & authentication module (Firebase in progress)
+- 📂 Organized folder structure with Bloc state management
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+---
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## 🛠️ Tech Stack
+
+- **Flutter + Dart**
+- **Bloc / Cubit**
+- **Firebase Auth (Planned)**
+- **SQLite (Local DB)**
+- **Provider (for theming and settings)**
+- **Charts_flutter**
+
+---
+
+## 🚀 Getting Started
+
+```bash
+git clone https://github.com/cybersleuth0/expenso.git
+cd expenso
+flutter pub get
+flutter run
