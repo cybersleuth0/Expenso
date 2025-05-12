@@ -72,6 +72,7 @@ class AppConstant {
 
       // Process expenses for each date
       for (String eachdate in uniqDates) {
+
         num eachDateTotalAmt = 0.0; //this is the total amount of each date
         List<ExpenseModel> eachDateExpense =
             []; //this will store all expenses of each date

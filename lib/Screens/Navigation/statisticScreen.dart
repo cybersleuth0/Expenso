@@ -16,7 +16,8 @@ class _StatisticPageState extends State<StatisticPage> {
   String filterDropdownValue = "Month";
   List<String> filterDropdownValueList = ["Month", "Year"];
 
-  int filterFlag = 1;
+  int xValue = 0;
+  DateFormat dateformater = DateFormat();
 
   // List<Map<String, dynamic>> graphData = [
   //   {"x": 5, "y": 10.toDouble()},
@@ -25,12 +26,11 @@ class _StatisticPageState extends State<StatisticPage> {
   //   {"x": 20, "y": 60.toDouble()},
   //   {"x": 25, "y": 80.toDouble()},
   // ];
-  DateFormat? dateformater;
 
   @override
   void initState() {
     super.initState();
-    context.read<ExpBloc>().add(GetInitialExpEvent(type: filterFlag));
+    context.read<ExpBloc>().add(GetInitialExpEvent(type: 1));
   }
 
   @override
@@ -133,13 +133,15 @@ class _StatisticPageState extends State<StatisticPage> {
                         initialSelection: filterDropdownValue,
                         onSelected: (String? newValue) {
                           filterDropdownValue = newValue!;
-
                           if (filterDropdownValue == "Month") {
-                            filterFlag = 1;
+                            context
+                                .read<ExpBloc>()
+                                .add(GetInitialExpEvent(type: 1));
                           } else {
-                            filterFlag = 2;
+                            context
+                                .read<ExpBloc>()
+                                .add(GetInitialExpEvent(type: 2));
                           }
-                          setState(() {});
                         },
                         dropdownMenuEntries:
                             filterDropdownValueList.map((newvalue) {
@@ -178,16 +180,13 @@ class _StatisticPageState extends State<StatisticPage> {
                           show: false,
                         ),
                         barGroups: mData.map((element) {
-                          DateTime parsedDate = DateTime
-                              .fromMicrosecondsSinceEpoch(
-                              int.parse(element.type));
-                          print(parsedDate);
+                          DateTime date =
+                              DateFormat("MM,d, yyyy").parse(element.type);
+                          xValue = (filterDropdownValue == "Month")
+                              ? date.month
+                              : date.year;
+                          print("xValue : ${xValue}");
 
-                          int xValue = filterFlag == 1
-                              ? int.parse(
-                              DateFormat("MM").format(parsedDate)) // month
-                              : int.parse(DateFormat("yyyy")
-                              .format(parsedDate)); // year
                           return BarChartGroupData(
                             x: xValue,
                             barRods: [
