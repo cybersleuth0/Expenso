@@ -25,7 +25,6 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     // Fetch all expenses on app start
     context.read<ExpBloc>().add(GetInitialExpEvent());
-    AppConstant.initcalled++;
     getUsername().then((value) {
       setState(() {
         userName = value;
@@ -151,7 +150,7 @@ class _HomePageState extends State<HomePage> {
                         borderRadius: BorderRadius.circular(15),
                       ),
                       child: Padding(
-                        padding: const EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.all(5.0),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -167,7 +166,8 @@ class _HomePageState extends State<HomePage> {
                                           fontSize: 20,
                                           fontFamily: "Poppins")),
                                   SizedBox(height: 2),
-                                  Text("\₹ 3,722",
+                                  Text(
+                                      "₹ ${filteredExpenses.isNotEmpty ? filteredExpenses.map((e) => e.totalAmt.abs()).reduce((value, element) => value + element) : "0.00"}",
                                       style: TextStyle(
                                           color: Colors.white,
                                           fontSize: 25,
@@ -180,10 +180,11 @@ class _HomePageState extends State<HomePage> {
                                         height: 30,
                                         alignment: Alignment.center,
                                         decoration: BoxDecoration(
-                                            color: Colors.red,
+                                            color: Colors.green,
                                             borderRadius:
                                                 BorderRadius.circular(5)),
-                                        child: Text(' \₹ 240 ',
+                                        child: Text(
+                                            ' ₹ ${filteredExpenses.isNotEmpty ? filteredExpenses.map((e) => e.totalAmt).reduce((value, element) => value+ element).abs() : "0.0"} ',
                                             style: TextStyle(
                                                 color: Colors.white,
                                                 fontSize: 15,
@@ -191,9 +192,9 @@ class _HomePageState extends State<HomePage> {
                                                 fontWeight: FontWeight.w500)),
                                       ),
                                       SizedBox(width: 5),
-                                      Text('than last month',
+                                      Text('Remaining\nAmount to Use',
                                           style: TextStyle(
-                                              color: Colors.white54,
+                                              color: Colors.white70,
                                               fontWeight: FontWeight.w500,
                                               fontSize: 12,
                                               fontFamily: "Poppins")),
@@ -202,7 +203,7 @@ class _HomePageState extends State<HomePage> {
                                 ],
                               ),
                             ),
-                            SizedBox(width: 10),
+                            SizedBox(width: 5),
                             Expanded(
                               child: Transform.scale(
                                 alignment: Alignment.center,
